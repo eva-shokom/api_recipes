@@ -27,6 +27,7 @@ services:
   frontend:
     container_name: foodgram-front
     image: evashokom/foodgram_frontend
+    env_file: .env
     command: cp -r /app/build/. /frontend_static/
     volumes:
       - static:/frontend_static
@@ -36,6 +37,7 @@ services:
     depends_on:
       - backend
       - frontend
+    env_file: .env
     image: evashokom/foodgram_gateway
     ports:
       - "8888:80"
