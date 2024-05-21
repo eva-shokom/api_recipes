@@ -7,7 +7,6 @@ from .views import (
 
 app_name = 'api'
 
-
 router = DefaultRouter()
 
 router.register('recipes', RecipeViewSet, basename='recipe')

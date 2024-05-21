@@ -228,7 +228,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
         response = HttpResponse(
             '\n'.join(shopping_list), content_type='text.txt'
         )
-        response['Content-Disposition'] = 'attachment; filename=shopping_list.txt'
+        response['Content-Disposition'] = (
+            'attachment; filename=shopping_list.txt')
         return response
 
     @action(
@@ -241,7 +242,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def get_link(self, request, **kwargs):
         """Метод для получения короткой ссылки на рецепт."""
         recipe_id = kwargs.get('pk')
-        url = reverse('api:recipe-detail', kwargs={'pk': recipe_id}) 
+        url = reverse('api:recipe-detail', kwargs={'pk': recipe_id})
         full_url = request.build_absolute_uri(url)
         serializer = LinkSerializers(
             data={'full_url': full_url}, context={'request': request})
