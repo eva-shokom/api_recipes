@@ -40,6 +40,7 @@ services:
     ports:
       - "8888:80"
     volumes:
+      - ./frontend/build:/usr/share/nginx/html/
+      - ./docs/:/usr/share/nginx/html/api/docs/
       - static:/staticfiles
       - media:/media
-      - ../docs/:/usr/share/nginx/html/api/docs/
