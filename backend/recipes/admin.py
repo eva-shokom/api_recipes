@@ -1,6 +1,10 @@
 from django.contrib import admin
+from django.utils.html import format_html
 
-from .models import Ingredient, Recipe, RecipeIngredient, RecipeTag, Tag
+from .models import (
+    Favorite, Ingredient, Recipe, RecipeIngredient, RecipeTag, ShoppingCart,
+    Tag
+)
 
 
 @admin.display(description='Общее число добавлений рецепта в избранное.')
@@ -22,19 +26,50 @@ class RecipeTagInline(admin.TabularInline):
 class IngredientAdmin(admin.ModelAdmin):
     inlines = (RecipeIngredientInline,)
     list_display = ('name', 'measurement_unit')
+    list_display_links = ('name',)
     search_fields = ('name',)
 
 
 @admin.register(Tag)
 class TagAdmin(admin.ModelAdmin):
     inlines = (RecipeTagInline,)
-    list_display = ('name', 'slug')
+    list_display = ('id', 'name', 'slug')
+    list_display_links = ('id', 'name', 'slug')
 
 
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
     inlines = (RecipeIngredientInline, RecipeTagInline)
     list_display = ('author', 'name',)
-    search_fields = ('author', 'name')
+    list_display_links = ('name', 'author')
+    search_fields = ('name', 'author__username')
     list_filter = ('tags',)
     list_display_links = ('author', 'name')
+    readonly_fields = ('in_favorites',)
+    fieldsets = (
+        (
+            None,
+            {
+                'fields': (
+                    'author',
+                    ('name', 'cooking_time', 'in_favorites'),
+                    'text',
+                    'image',
+                    'tags',
+                )
+            },
+        ),
+    )
+
+    @admin.display(
+        description=format_html('<strong>Рецептов в избранных</strong>')
+    )
+    def in_favorites(self, obj):
+        """Количество рецепта в избранном."""
+        return Favorite.objects.filter(recipe=obj).count()
+
+
+@admin.register(Favorite, ShoppingCart)
+class AuthorRecipeAdmin(admin.ModelAdmin):
+    list_display = ('id', '__str__')
+    list_display_links = ('id', '__str__')
