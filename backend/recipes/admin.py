@@ -61,7 +61,9 @@ class RecipeAdmin(admin.ModelAdmin):
     )
 
     @admin.display(
-        description=format_html('<strong>Рецептов в избранных</strong>')
+        description=format_html(
+            '<strong>Добавление рецепта в избранное: </strong>'
+        )
     )
     def in_favorites(self, obj):
         """Количество рецепта в избранном."""
