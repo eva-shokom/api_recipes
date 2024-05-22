@@ -55,7 +55,6 @@ class RecipeAdmin(admin.ModelAdmin):
                     ('name', 'cooking_time', 'in_favorites'),
                     'text',
                     'image',
-                    'tags',
                 )
             },
         ),
