@@ -241,9 +241,11 @@ class RecipeViewSet(viewsets.ModelViewSet):
     )
     def get_link(self, request, **kwargs):
         """Метод для получения короткой ссылки на рецепт."""
+        full_url = request.META.get('HTTP_REFERER')
         recipe_id = kwargs.get('pk')
-        url = reverse('api:recipe-detail', kwargs={'pk': recipe_id})
-        full_url = request.build_absolute_uri(url)
+        if full_url is None:
+            url = reverse('api:recipe-detail', kwargs={'pk': recipe_id})
+            full_url = request.build_absolute_uri(url)
         serializer = LinkSerializers(
             data={'full_url': full_url}, context={'request': request})
         serializer.is_valid(raise_exception=True)
