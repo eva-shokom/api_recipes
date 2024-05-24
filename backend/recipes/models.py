@@ -5,7 +5,8 @@ from django.db.models import F, Q
 
 from foodgram.constants import (
     MAX_AMOUNT, MAX_COOKING_TIME, MAX_LENGTH, MEASUREMENT_UNIT_LENGTH,
-    MIN_AMOUNT, MIN_COOKING_TIME, RECIPE_NAME_MAX_LENGTH, STRING_MAX_LENGTH
+    MIN_AMOUNT, MIN_COOKING_TIME, RECIPE_NAME_MAX_LENGTH, STRING_MAX_LENGTH,
+    TAG_LENGTH
 )
 
 
@@ -41,12 +42,11 @@ class Ingredient(models.Model):
 class Tag(models.Model):
     """Модель тэгов для рецепта."""
     name = models.CharField(
-        max_length=MAX_LENGTH,
-        unique=True,
+        max_length=TAG_LENGTH,
         verbose_name='Название тэга',
     )
     slug = models.SlugField(
-        unique=True,
+        max_length=TAG_LENGTH,
         verbose_name='Слаг',
     )
 
@@ -88,7 +88,6 @@ class Recipe(models.Model):
         Tag,
         verbose_name='Тэги',
         related_name='recipes',
-        through='RecipeTag',
     )
     cooking_time = models.PositiveSmallIntegerField(
         verbose_name='Время приготовления блюда',
@@ -166,43 +165,28 @@ class RecipeIngredient(models.Model):
         return f'{self.ingredient} в рецепте "{self.recipe}"'
 
 
-class RecipeTag(models.Model):
-    """Модель для связи рецептов и тэгов."""
-    tag = models.ForeignKey(
-        Tag,
-        on_delete=models.CASCADE,
-        verbose_name='Тэг'
-    )
-    recipe = models.ForeignKey(
-        Recipe,
-        on_delete=models.CASCADE,
-        verbose_name='Рецепт'
-    )
-
-    class Meta:
-        verbose_name = 'Тэг для рецепта'
-        verbose_name_plural = 'Тэги для рецепта'
-
-    def __str__(self):
-        return f'Тэг {self.tag} для рецепта "{self.recipe}"'
-
-
-class Favorite(models.Model):
-    """Модель для связи избранных рецептов и пользователя."""
+class UserRecipe(models.Model):
+    """Абстрактная модель для изранных рецептов и списка покупок."""
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='favorite',
         verbose_name='Пользователь'
     )
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
-        related_name='favorite',
         verbose_name='Рецепт'
     )
 
     class Meta:
+        abstract = True
+
+
+class Favorite(UserRecipe):
+    """Модель для связи избранных рецептов и пользователя."""
+
+    class Meta:
+        default_related_name = 'favorite'
         verbose_name = 'Избранный рецепт'
         verbose_name_plural = 'Избранные рецепты'
         constraints = [
@@ -216,22 +200,11 @@ class Favorite(models.Model):
         return f'Рецепт {self.recipe} в избранном у {self.user}'
 
 
-class ShoppingCart(models.Model):
+class ShoppingCart(UserRecipe):
     """Модель для связи пользователя и рецептов в списке покупок."""
-    user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='shopping_cart',
-        verbose_name='Пользователь'
-    )
-    recipe = models.ForeignKey(
-        Recipe,
-        on_delete=models.CASCADE,
-        related_name='shopping_cart',
-        verbose_name='Рецепт в списке покупок'
-    )
 
     class Meta:
+        default_related_name = 'shopping_cart'
         verbose_name = 'Список покупок'
         verbose_name_plural = 'Списки покупок'
         constraints = [

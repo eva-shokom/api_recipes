@@ -1,25 +1,15 @@
 from django.contrib import admin
-from django.utils.html import format_html
 
 from .models import (
-    Favorite, Ingredient, Recipe, RecipeIngredient, RecipeTag, ShoppingCart,
-    Tag
+    Favorite, Ingredient, Recipe, RecipeIngredient, ShoppingCart, Tag
 )
-
-
-@admin.display(description='Общее число добавлений рецепта в избранное.')
-def favorite_count(self, recipe):
-    return recipe.favorites.count()
+from foodgram.constants import MIN_AMOUNT
 
 
 class RecipeIngredientInline(admin.TabularInline):
     model = RecipeIngredient
     extra = 1
-
-
-class RecipeTagInline(admin.TabularInline):
-    model = RecipeTag
-    extra = 1
+    min_num = MIN_AMOUNT
 
 
 @admin.register(Ingredient)
@@ -32,42 +22,39 @@ class IngredientAdmin(admin.ModelAdmin):
 
 @admin.register(Tag)
 class TagAdmin(admin.ModelAdmin):
-    inlines = (RecipeTagInline,)
     list_display = ('id', 'name', 'slug')
     list_display_links = ('id', 'name', 'slug')
 
 
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
-    inlines = (RecipeIngredientInline, RecipeTagInline)
+    inlines = (RecipeIngredientInline,)
     list_display = ('author', 'name',)
     list_display_links = ('name', 'author')
     search_fields = ('name', 'author__username')
+    filter_horizontal = ('tags',)
     list_filter = ('tags',)
     list_display_links = ('author', 'name')
-    readonly_fields = ('in_favorites',)
+    readonly_fields = ('favorite_count',)
     fieldsets = (
         (
             None,
             {
                 'fields': (
                     'author',
-                    ('name', 'cooking_time', 'in_favorites'),
+                    ('name', 'cooking_time', 'favorite_count'),
                     'text',
                     'image',
+                    'tags',
                 )
             },
         ),
     )
 
-    @admin.display(
-        description=format_html(
-            '<strong>Добавление рецепта в избранное: </strong>'
-        )
-    )
-    def in_favorites(self, obj):
+    @admin.display(description='Общее число добавлений рецепта в избранное.')
+    def favorite_count(self, recipe):
         """Количество рецепта в избранном."""
-        return Favorite.objects.filter(recipe=obj).count()
+        return recipe.favorites.count()
 
 
 @admin.register(Favorite, ShoppingCart)

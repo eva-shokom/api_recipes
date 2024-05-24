@@ -18,16 +18,14 @@ class Link(models.Model):
 
     def save(self, *args, **kwargs):
         """Метод для автоматической генерации уникальной короткой ссылки."""
-        if not self.short_url:
-            while True:
-                self.short_url = ''.join(
-                    random.choices(
-                        string.ascii_letters + string.digits,
-                        k=LINK_LENGTH
-                    )
+        while not self.short_url and not Link.objects.filter(
+                short_url=self.short_url).exists():
+            self.short_url = ''.join(
+                random.choices(
+                    string.ascii_letters + string.digits,
+                    k=LINK_LENGTH
                 )
-                if not Link.objects.filter(short_url=self.short_url).exists():
-                    break
+            )
         super().save(*args, **kwargs)
 
     def __str__(self):
