@@ -15,8 +15,7 @@ SECRET_KEY = os.getenv('SECRET_KEY', get_random_secret_key())
 
 DEBUG = os.getenv('DEBUG', '') == 'True'
 
-# ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'yafoodpract.ddns.net localhost').split()
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'yafoodpract.ddns.net localhost').split()
 
 AUTH_USER_MODEL = 'users.User'
 

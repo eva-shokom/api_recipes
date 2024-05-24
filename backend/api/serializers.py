@@ -186,8 +186,6 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
             raise ValidationError(
                 {'ingredients': 'Добавьте хотя бы один ингредиент'}
             )
-        for ingredient in ingredients:
-            print(ingredient['ingredient'])
         ingredients_set = {
             ingredient['ingredient'] for ingredient in ingredients
         }
@@ -199,8 +197,6 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
 
     @staticmethod
     def create_ingredients(recipe, ingredients):
-        for ingredient in ingredients:
-            print(ingredient)
         RecipeIngredient.objects.bulk_create(
             RecipeIngredient(
                 recipe=recipe,

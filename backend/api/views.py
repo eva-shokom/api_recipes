@@ -1,7 +1,7 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from django.contrib.auth import get_user_model
 from django.db.models import Sum
-from django.http import Http404, HttpResponse
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from djoser.views import UserViewSet
 from rest_framework import status, viewsets
@@ -16,8 +16,8 @@ from .permissions import IsAuthorOrReadOnly
 from .serializers import (
     AvatarSerializer, CustomUserSerializer, FavoriteSerializer,
     IngredientSerializer, LinkSerializers, RecipeReadSerializer,
-    RecipeShortSerializer, RecipeWriteSerializer, ShoppingCartSerializer,
-    SubscribeReadSerializer, SubscribeWriteSerializer, TagSerializer
+    RecipeWriteSerializer, ShoppingCartSerializer, SubscribeReadSerializer,
+    SubscribeWriteSerializer, TagSerializer
 )
 from recipes.models import (
     Favorite, Ingredient, Recipe, RecipeIngredient, ShoppingCart, Subscribe,
@@ -133,7 +133,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(data={'recipe': pk})
         serializer.is_valid(raise_exception=True)
         serializer.save(user=user)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)   
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def delete_from(self, model, user, pk):
         """Метод для удаления рецепта из избранного или из списка покупок."""
