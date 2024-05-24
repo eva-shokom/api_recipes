@@ -65,7 +65,7 @@ class SubscribeReadSerializer(CustomUserSerializer):
         if limit:
             try:
                 recipes = recipes[:int(limit)]
-            except:
+            except TypeError:
                 pass
         serializer = RecipeShortSerializer(recipes, many=True, read_only=True)
         return serializer.data
