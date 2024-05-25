@@ -65,7 +65,7 @@ class SubscribeReadSerializer(CustomUserSerializer):
         if limit:
             try:
                 recipes = recipes[:int(limit)]
-            except TypeError:
+            except ValueError:
                 pass
         serializer = RecipeShortSerializer(recipes, many=True, read_only=True)
         return serializer.data
@@ -76,12 +76,6 @@ class SubscribeReadSerializer(CustomUserSerializer):
 
 class SubscribeWriteSerializer(serializers.ModelSerializer):
     """Сериализатор для сохранения подписок пользователя."""
-
-    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
-    author = serializers.SlugRelatedField(
-        slug_field='username',
-        queryset=User.objects.all(),
-    )
 
     class Meta:
         model = Subscribe

@@ -14,7 +14,6 @@ class RecipeIngredientInline(admin.TabularInline):
 
 @admin.register(Ingredient)
 class IngredientAdmin(admin.ModelAdmin):
-    inlines = (RecipeIngredientInline,)
     list_display = ('name', 'measurement_unit')
     list_display_links = ('name',)
     search_fields = ('name',)

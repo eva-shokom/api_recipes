@@ -71,7 +71,7 @@ class CustomUserViewSet(UserViewSet):
         deleted_subscriptions_count, _ = Subscribe.objects.filter(
             user=request.user, author=self.get_object()
         ).delete()
-        if deleted_subscriptions_count == 0:
+        if not deleted_subscriptions_count:
             return Response(
                 {"errors": "Вы не были подписаны на этого пользователя"},
                 status=status.HTTP_400_BAD_REQUEST
@@ -135,17 +135,13 @@ class RecipeViewSet(viewsets.ModelViewSet):
         serializer.save(user=user)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    def delete_from(self, model, user, pk):
+    def delete_from(self, model, user, pk, error_message=''):
         """Метод для удаления рецепта из избранного или из списка покупок."""
-        if model == Favorite:
-            error_message = 'избранных рецептов'
-        elif model == ShoppingCart:
-            error_message = 'покупок'
         recipe = get_object_or_404(Recipe, id=pk)
         deleted_model_count, _ = model.objects.filter(
             user=user, recipe=recipe
         ).delete()
-        if deleted_model_count == 0:
+        if not deleted_model_count:
             return Response(
                 {
                     'errors': (
@@ -169,7 +165,10 @@ class RecipeViewSet(viewsets.ModelViewSet):
     @favorite.mapping.delete
     def delete_favorite(self, request, **kwargs):
         return self.delete_from(
-            model=Favorite, user=request.user, pk=self.kwargs.get('pk'))
+            model=Favorite,
+            user=request.user,
+            pk=self.kwargs.get('pk'),
+            error_message='избранных рецептов')
 
     @action(
         detail=True,
@@ -184,7 +183,10 @@ class RecipeViewSet(viewsets.ModelViewSet):
     @shopping_cart.mapping.delete
     def delete_shopping_cart(self, request, **kwargs):
         return self.delete_from(
-            model=ShoppingCart, user=request.user, pk=self.kwargs.get('pk'))
+            model=ShoppingCart,
+            user=request.user,
+            pk=self.kwargs.get('pk'),
+            error_message='покупок')
 
     @action(
         detail=False,
