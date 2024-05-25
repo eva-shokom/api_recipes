@@ -59,7 +59,7 @@ class CustomUserViewSet(UserViewSet):
         author_id = self.kwargs.get('id')
         author = get_object_or_404(User, id=author_id)
         serializer = SubscribeWriteSerializer(
-            data={'author': author},
+            data={'author': author.id, 'user': request.user.id},
             context={'request': request}
         )
         serializer.is_valid(raise_exception=True)
