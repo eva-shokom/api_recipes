@@ -26,7 +26,7 @@
 - Склонировать репозиторий
 
 ```bash
-   git clone git@github.com:evashokom/foodgram.git
+   git clone git@github.com:eva-shokom/foodgram.git
 ```
 
 - В корневой директории проекта создать файл с переменными окружения (см. пример env.example) 
