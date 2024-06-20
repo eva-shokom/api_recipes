@@ -26,7 +26,7 @@
 - Склонировать репозиторий
 
 ```bash
-   git clone git@github.com:eva-shokom/foodgram.git
+   git clone git@github.com:evashokom/foodgram.git
 ```
 
 - В корневой директории проекта создать файл с переменными окружения (см. пример env.example) 
@@ -34,22 +34,42 @@
 - Запустить проект локально
 
 ``` bash
-    docker compose -f infra/docker-compose.yml up -d --build  
+    docker compose -f docker-compose.yml up -d --build  
 ```
 
-После выполнения этих шагов проект будет запущен и станет доступен по адресу [localhost](http://localhost/).
+- Выполнить миграции, собрать и скопировать статику
 
+``` bash
+    docker compose -f docker-compose.yml exec backend python manage.py migrate
+    docker compose -f docker-compose.yml exec backend python manage.py collectstatic --no-input
+    docker compose -f docker-compose.yml exec backend cp -r /app/collected_static/. /backend_static/static/
+```
+
+
+После выполнения этих шагов проект будет запущен и станет доступен по адресу [localhost:8888](http://localhost:8888/).
 
 
 #### Наполнение БД данными
 
-- Ингредиенты
+Для корректной работы проекта необходимо создать суперюзера и наполнить базу данными.
 
-```bash
-   docker compose -f infra/docker-compose.yml exec backend python manage.py import_data
+- Создать суперюзера
+
+После выполненя команды потребуется ввести email, имя и фамилию пользователя, логин и пароль
+
+``` bash
+    docker compose -f docker-compose.yml exec backend python manage.py createsuperuser
 ```
 
-- Тэги (необходимо создать несколько тегов вручную через админку)
+- Создать ингредиенты
+
+```bash
+   docker compose -f docker-compose.yml exec backend python manage.py import_data
+```
+
+- Создать тэги.
+
+Необходимо создать несколько тегов вручную через админку по адресу http://localhost:8888/admin/
 
 
 #### Workflow проекта
@@ -71,4 +91,3 @@
 ##### Проект подготовила @eva_shokom с большой помощью и подержкой команды помощи и сопровождения Яндекс.Практикума. 
 
 Если у вас возникнут вопросы, пожелания и предложения, вы можете обращаться к автору проекта. Будем рады видеть вашу обратную связь! 
-
