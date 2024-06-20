@@ -26,7 +26,7 @@
 - Склонировать репозиторий
 
 ```bash
-   git clone git@github.com:eva-shokom/api_recipes.git
+git clone git@github.com:eva-shokom/api_recipes.git
 ```
 
 - В корневой директории проекта создать файл с переменными окружения (см. пример env.example) 
@@ -34,15 +34,15 @@
 - Запустить проект локально
 
 ``` bash
-    docker compose -f docker-compose.yml up -d --build  
+docker compose -f docker-compose.yml up -d --build  
 ```
 
 - Выполнить миграции, собрать и скопировать статику
 
 ``` bash
-    docker compose -f docker-compose.yml exec backend python manage.py migrate
-    docker compose -f docker-compose.yml exec backend python manage.py collectstatic --no-input
-    docker compose -f docker-compose.yml exec backend cp -r /app/collected_static/. /backend_static/static/
+docker compose -f docker-compose.yml exec backend python manage.py migrate
+docker compose -f docker-compose.yml exec backend python manage.py collectstatic --no-input
+docker compose -f docker-compose.yml exec backend cp -r /app/collected_static/. /backend_static/static/
 ```
 
 
@@ -58,13 +58,13 @@
 После выполненя команды потребуется ввести email, имя и фамилию пользователя, логин и пароль
 
 ``` bash
-    docker compose -f docker-compose.yml exec backend python manage.py createsuperuser
+docker compose -f docker-compose.yml exec backend python manage.py createsuperuser
 ```
 
 - Создать ингредиенты
 
 ```bash
-   docker compose -f docker-compose.yml exec backend python manage.py import_data
+docker compose -f docker-compose.yml exec backend python manage.py import_data
 ```
 
 - Создать тэги.
